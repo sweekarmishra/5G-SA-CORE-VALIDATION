@@ -1,0 +1,751 @@
+[
+  {
+    "id": "TC-NRF-01",
+    "title": "AMF registers with NRF",
+    "ref": "TS 29.510 5.2.2.2",
+    "status": "PASS",
+    "message": "",
+    "ms": 40.0,
+    "trace": [
+      {
+        "method": "PUT",
+        "path": "/nnrf-nfm/v1/nf-instances/nf-amf-1",
+        "request": {
+          "nfType": "AMF",
+          "ipv4Addresses": [
+            "10.0.0.01"
+          ]
+        },
+        "status": 201,
+        "response": {
+          "nfInstanceId": "nf-amf-1",
+          "nfStatus": "REGISTERED",
+          "nfType": "AMF",
+          "ipv4Addresses": [
+            "10.0.0.01"
+          ]
+        },
+        "ms": 39.4
+      }
+    ]
+  },
+  {
+    "id": "TC-NRF-02",
+    "title": "SMF registers with NRF",
+    "ref": "TS 29.510 5.2.2.2",
+    "status": "PASS",
+    "message": "",
+    "ms": 1.9,
+    "trace": [
+      {
+        "method": "PUT",
+        "path": "/nnrf-nfm/v1/nf-instances/nf-smf-1",
+        "request": {
+          "nfType": "SMF",
+          "ipv4Addresses": [
+            "10.0.0.02"
+          ]
+        },
+        "status": 201,
+        "response": {
+          "nfInstanceId": "nf-smf-1",
+          "nfStatus": "REGISTERED",
+          "nfType": "SMF",
+          "ipv4Addresses": [
+            "10.0.0.02"
+          ]
+        },
+        "ms": 1.8
+      }
+    ]
+  },
+  {
+    "id": "TC-NRF-03",
+    "title": "UPF registers with NRF",
+    "ref": "TS 29.510 5.2.2.2",
+    "status": "PASS",
+    "message": "",
+    "ms": 2.0,
+    "trace": [
+      {
+        "method": "PUT",
+        "path": "/nnrf-nfm/v1/nf-instances/nf-upf-1",
+        "request": {
+          "nfType": "UPF",
+          "ipv4Addresses": [
+            "10.0.0.03"
+          ]
+        },
+        "status": 201,
+        "response": {
+          "nfInstanceId": "nf-upf-1",
+          "nfStatus": "REGISTERED",
+          "nfType": "UPF",
+          "ipv4Addresses": [
+            "10.0.0.03"
+          ]
+        },
+        "ms": 1.9
+      }
+    ]
+  },
+  {
+    "id": "TC-NRF-04",
+    "title": "NF re-registration updates the profile",
+    "ref": "TS 29.510 5.2.2.2",
+    "status": "PASS",
+    "message": "",
+    "ms": 1.5,
+    "trace": [
+      {
+        "method": "PUT",
+        "path": "/nnrf-nfm/v1/nf-instances/nf-smf-1",
+        "request": {
+          "nfType": "SMF",
+          "ipv4Addresses": [
+            "10.0.0.22"
+          ]
+        },
+        "status": 200,
+        "response": {
+          "nfInstanceId": "nf-smf-1",
+          "nfStatus": "REGISTERED",
+          "nfType": "SMF",
+          "ipv4Addresses": [
+            "10.0.0.22"
+          ]
+        },
+        "ms": 1.4
+      }
+    ]
+  },
+  {
+    "id": "TC-NRF-05",
+    "title": "SMF discovery returns the registered SMF",
+    "ref": "TS 29.510 5.3.2.2",
+    "status": "PASS",
+    "message": "",
+    "ms": 1.4,
+    "trace": [
+      {
+        "method": "GET",
+        "path": "/nnrf-disc/v1/nf-instances?target-nf-type=SMF&requester-nf-type=AMF",
+        "request": null,
+        "status": 200,
+        "response": {
+          "nfInstances": [
+            {
+              "nfInstanceId": "nf-smf-1",
+              "nfStatus": "REGISTERED",
+              "nfType": "SMF",
+              "ipv4Addresses": [
+                "10.0.0.22"
+              ]
+            }
+          ]
+        },
+        "ms": 1.3
+      }
+    ]
+  },
+  {
+    "id": "TC-NRF-06",
+    "title": "Discovery without target-nf-type is rejected",
+    "ref": "TS 29.510 5.3.2.2",
+    "status": "PASS",
+    "message": "",
+    "ms": 1.2,
+    "trace": [
+      {
+        "method": "GET",
+        "path": "/nnrf-disc/v1/nf-instances",
+        "request": null,
+        "status": 400,
+        "response": {
+          "cause": "MANDATORY_QUERY_PARAM_MISSING",
+          "param": "target-nf-type"
+        },
+        "ms": 1.2
+      }
+    ]
+  },
+  {
+    "id": "TC-NRF-07",
+    "title": "Discovery of an absent NF type returns an empty list",
+    "ref": "TS 29.510 5.3.2.2",
+    "status": "PASS",
+    "message": "",
+    "ms": 1.5,
+    "trace": [
+      {
+        "method": "GET",
+        "path": "/nnrf-disc/v1/nf-instances?target-nf-type=PCF",
+        "request": null,
+        "status": 200,
+        "response": {
+          "nfInstances": []
+        },
+        "ms": 1.4
+      }
+    ]
+  },
+  {
+    "id": "TC-REG-01",
+    "title": "Initial registration succeeds",
+    "ref": "TS 23.502 4.2.2.2.2",
+    "status": "PASS",
+    "message": "",
+    "ms": 1.4,
+    "trace": [
+      {
+        "method": "POST",
+        "path": "/namf-comm/v1/ue-contexts",
+        "request": {
+          "supi": "imsi-001010000000001",
+          "plmnId": {
+            "mcc": "001",
+            "mnc": "01"
+          }
+        },
+        "status": 201,
+        "response": {
+          "supi": "imsi-001010000000001",
+          "state": "REGISTERED",
+          "guti": "5g-guti-001-01-00000001"
+        },
+        "ms": 1.3
+      }
+    ]
+  },
+  {
+    "id": "TC-REG-02",
+    "title": "Re-registration of a registered UE is accepted",
+    "ref": "TS 23.502 4.2.2.2.2",
+    "status": "PASS",
+    "message": "",
+    "ms": 3.0,
+    "trace": [
+      {
+        "method": "POST",
+        "path": "/namf-comm/v1/ue-contexts",
+        "request": {
+          "supi": "imsi-001010000000002",
+          "plmnId": {
+            "mcc": "001",
+            "mnc": "01"
+          }
+        },
+        "status": 201,
+        "response": {
+          "supi": "imsi-001010000000002",
+          "state": "REGISTERED",
+          "guti": "5g-guti-001-01-00000002"
+        },
+        "ms": 1.6
+      },
+      {
+        "method": "POST",
+        "path": "/namf-comm/v1/ue-contexts",
+        "request": {
+          "supi": "imsi-001010000000002",
+          "plmnId": {
+            "mcc": "001",
+            "mnc": "01"
+          }
+        },
+        "status": 200,
+        "response": {
+          "supi": "imsi-001010000000002",
+          "state": "REGISTERED",
+          "guti": "5g-guti-001-01-00000002"
+        },
+        "ms": 1.3
+      }
+    ]
+  },
+  {
+    "id": "TC-REG-03",
+    "title": "Malformed SUPI is rejected",
+    "ref": "TS 23.502 4.2.2.2.2",
+    "status": "PASS",
+    "message": "",
+    "ms": 1.5,
+    "trace": [
+      {
+        "method": "POST",
+        "path": "/namf-comm/v1/ue-contexts",
+        "request": {
+          "supi": "imsi-123",
+          "plmnId": {
+            "mcc": "001",
+            "mnc": "01"
+          }
+        },
+        "status": 400,
+        "response": {
+          "cause": "INVALID_SUPI"
+        },
+        "ms": 1.5
+      }
+    ]
+  },
+  {
+    "id": "TC-REG-04",
+    "title": "PLMN not allowed is rejected",
+    "ref": "TS 23.502 4.2.2.2.2",
+    "status": "PASS",
+    "message": "",
+    "ms": 1.3,
+    "trace": [
+      {
+        "method": "POST",
+        "path": "/namf-comm/v1/ue-contexts",
+        "request": {
+          "supi": "imsi-001010000000003",
+          "plmnId": {
+            "mcc": "404",
+            "mnc": "99"
+          }
+        },
+        "status": 403,
+        "response": {
+          "cause": "PLMN_NOT_ALLOWED"
+        },
+        "ms": 1.2
+      }
+    ]
+  },
+  {
+    "id": "TC-REG-05",
+    "title": "Barred subscriber fails authentication",
+    "ref": "TS 23.502 4.2.2.2.2",
+    "status": "PASS",
+    "message": "",
+    "ms": 1.5,
+    "trace": [
+      {
+        "method": "POST",
+        "path": "/namf-comm/v1/ue-contexts",
+        "request": {
+          "supi": "imsi-001019999999999",
+          "plmnId": {
+            "mcc": "001",
+            "mnc": "01"
+          }
+        },
+        "status": 403,
+        "response": {
+          "cause": "AUTHENTICATION_FAILURE"
+        },
+        "ms": 1.5
+      }
+    ]
+  },
+  {
+    "id": "TC-PDU-01",
+    "title": "PDU session establishment creates an N4 session",
+    "ref": "TS 23.502 4.3.2.2.1",
+    "status": "FAIL",
+    "message": "status: expected 201, got 500",
+    "ms": 3.1,
+    "trace": [
+      {
+        "method": "POST",
+        "path": "/namf-comm/v1/ue-contexts",
+        "request": {
+          "supi": "imsi-001010000000004",
+          "plmnId": {
+            "mcc": "001",
+            "mnc": "01"
+          }
+        },
+        "status": 201,
+        "response": {
+          "supi": "imsi-001010000000004",
+          "state": "REGISTERED",
+          "guti": "5g-guti-001-01-00000003"
+        },
+        "ms": 1.4
+      },
+      {
+        "method": "POST",
+        "path": "/nsmf-pdusession/v1/sm-contexts",
+        "request": {
+          "supi": "imsi-001010000000004",
+          "pduSessionId": 1,
+          "dnn": "internet",
+          "sNssai": {
+            "sst": 1
+          }
+        },
+        "status": 500,
+        "response": {
+          "cause": "N4_SESSION_ESTABLISHMENT_FAILURE"
+        },
+        "ms": 1.5
+      }
+    ]
+  },
+  {
+    "id": "TC-PDU-02",
+    "title": "Second PDU session (IMS DNN) on the same UE",
+    "ref": "TS 23.502 4.3.2.2.1",
+    "status": "FAIL",
+    "message": "first session status: expected 201, got 500",
+    "ms": 2.6,
+    "trace": [
+      {
+        "method": "POST",
+        "path": "/namf-comm/v1/ue-contexts",
+        "request": {
+          "supi": "imsi-001010000000005",
+          "plmnId": {
+            "mcc": "001",
+            "mnc": "01"
+          }
+        },
+        "status": 201,
+        "response": {
+          "supi": "imsi-001010000000005",
+          "state": "REGISTERED",
+          "guti": "5g-guti-001-01-00000004"
+        },
+        "ms": 1.1
+      },
+      {
+        "method": "POST",
+        "path": "/nsmf-pdusession/v1/sm-contexts",
+        "request": {
+          "supi": "imsi-001010000000005",
+          "pduSessionId": 1,
+          "dnn": "internet",
+          "sNssai": {
+            "sst": 1
+          }
+        },
+        "status": 500,
+        "response": {
+          "cause": "N4_SESSION_ESTABLISHMENT_FAILURE"
+        },
+        "ms": 1.3
+      }
+    ]
+  },
+  {
+    "id": "TC-PDU-03",
+    "title": "PDU session without registration is rejected",
+    "ref": "TS 23.502 4.3.2.2.1",
+    "status": "PASS",
+    "message": "",
+    "ms": 1.2,
+    "trace": [
+      {
+        "method": "POST",
+        "path": "/nsmf-pdusession/v1/sm-contexts",
+        "request": {
+          "supi": "imsi-001010000000006",
+          "pduSessionId": 1,
+          "dnn": "internet",
+          "sNssai": {
+            "sst": 1
+          }
+        },
+        "status": 403,
+        "response": {
+          "cause": "UE_NOT_REGISTERED"
+        },
+        "ms": 1.0
+      }
+    ]
+  },
+  {
+    "id": "TC-PDU-04",
+    "title": "Unsupported DNN is rejected",
+    "ref": "TS 23.502 4.3.2.2.1",
+    "status": "PASS",
+    "message": "",
+    "ms": 2.7,
+    "trace": [
+      {
+        "method": "POST",
+        "path": "/namf-comm/v1/ue-contexts",
+        "request": {
+          "supi": "imsi-001010000000007",
+          "plmnId": {
+            "mcc": "001",
+            "mnc": "01"
+          }
+        },
+        "status": 201,
+        "response": {
+          "supi": "imsi-001010000000007",
+          "state": "REGISTERED",
+          "guti": "5g-guti-001-01-00000005"
+        },
+        "ms": 1.2
+      },
+      {
+        "method": "POST",
+        "path": "/nsmf-pdusession/v1/sm-contexts",
+        "request": {
+          "supi": "imsi-001010000000007",
+          "pduSessionId": 1,
+          "dnn": "private.corp",
+          "sNssai": {
+            "sst": 1
+          }
+        },
+        "status": 403,
+        "response": {
+          "cause": "DNN_NOT_SUPPORTED"
+        },
+        "ms": 1.4
+      }
+    ]
+  },
+  {
+    "id": "TC-PDU-05",
+    "title": "Unsupported network slice (S-NSSAI) is rejected",
+    "ref": "TS 23.502 4.3.2.2.1",
+    "status": "PASS",
+    "message": "",
+    "ms": 2.9,
+    "trace": [
+      {
+        "method": "POST",
+        "path": "/namf-comm/v1/ue-contexts",
+        "request": {
+          "supi": "imsi-001010000000008",
+          "plmnId": {
+            "mcc": "001",
+            "mnc": "01"
+          }
+        },
+        "status": 201,
+        "response": {
+          "supi": "imsi-001010000000008",
+          "state": "REGISTERED",
+          "guti": "5g-guti-001-01-00000006"
+        },
+        "ms": 1.3
+      },
+      {
+        "method": "POST",
+        "path": "/nsmf-pdusession/v1/sm-contexts",
+        "request": {
+          "supi": "imsi-001010000000008",
+          "pduSessionId": 1,
+          "dnn": "internet",
+          "sNssai": {
+            "sst": 9
+          }
+        },
+        "status": 403,
+        "response": {
+          "cause": "SNSSAI_NOT_ALLOWED"
+        },
+        "ms": 1.4
+      }
+    ]
+  },
+  {
+    "id": "TC-PDU-06",
+    "title": "Duplicate PDU session ID is rejected",
+    "ref": "TS 23.502 4.3.2.2.1",
+    "status": "FAIL",
+    "message": "first status: expected 201, got 500",
+    "ms": 2.7,
+    "trace": [
+      {
+        "method": "POST",
+        "path": "/namf-comm/v1/ue-contexts",
+        "request": {
+          "supi": "imsi-001010000000009",
+          "plmnId": {
+            "mcc": "001",
+            "mnc": "01"
+          }
+        },
+        "status": 201,
+        "response": {
+          "supi": "imsi-001010000000009",
+          "state": "REGISTERED",
+          "guti": "5g-guti-001-01-00000007"
+        },
+        "ms": 1.3
+      },
+      {
+        "method": "POST",
+        "path": "/nsmf-pdusession/v1/sm-contexts",
+        "request": {
+          "supi": "imsi-001010000000009",
+          "pduSessionId": 5,
+          "dnn": "internet",
+          "sNssai": {
+            "sst": 1
+          }
+        },
+        "status": 500,
+        "response": {
+          "cause": "N4_SESSION_ESTABLISHMENT_FAILURE"
+        },
+        "ms": 1.2
+      }
+    ]
+  },
+  {
+    "id": "TC-PDU-07",
+    "title": "Out-of-range PDU session ID is rejected",
+    "ref": "TS 23.502 4.3.2.2.1",
+    "status": "PASS",
+    "message": "",
+    "ms": 3.1,
+    "trace": [
+      {
+        "method": "POST",
+        "path": "/namf-comm/v1/ue-contexts",
+        "request": {
+          "supi": "imsi-001010000000010",
+          "plmnId": {
+            "mcc": "001",
+            "mnc": "01"
+          }
+        },
+        "status": 201,
+        "response": {
+          "supi": "imsi-001010000000010",
+          "state": "REGISTERED",
+          "guti": "5g-guti-001-01-00000008"
+        },
+        "ms": 1.4
+      },
+      {
+        "method": "POST",
+        "path": "/nsmf-pdusession/v1/sm-contexts",
+        "request": {
+          "supi": "imsi-001010000000010",
+          "pduSessionId": 16,
+          "dnn": "internet",
+          "sNssai": {
+            "sst": 1
+          }
+        },
+        "status": 400,
+        "response": {
+          "cause": "INVALID_PDU_SESSION_ID"
+        },
+        "ms": 1.5
+      }
+    ]
+  },
+  {
+    "id": "TC-PDU-08",
+    "title": "PDU session release removes the N4 session",
+    "ref": "TS 23.502 4.3.4.2",
+    "status": "FAIL",
+    "message": "setup status: expected 201, got 500",
+    "ms": 3.8,
+    "trace": [
+      {
+        "method": "POST",
+        "path": "/namf-comm/v1/ue-contexts",
+        "request": {
+          "supi": "imsi-001010000000011",
+          "plmnId": {
+            "mcc": "001",
+            "mnc": "01"
+          }
+        },
+        "status": 201,
+        "response": {
+          "supi": "imsi-001010000000011",
+          "state": "REGISTERED",
+          "guti": "5g-guti-001-01-00000009"
+        },
+        "ms": 1.2
+      },
+      {
+        "method": "POST",
+        "path": "/nsmf-pdusession/v1/sm-contexts",
+        "request": {
+          "supi": "imsi-001010000000011",
+          "pduSessionId": 1,
+          "dnn": "internet",
+          "sNssai": {
+            "sst": 1
+          }
+        },
+        "status": 500,
+        "response": {
+          "cause": "N4_SESSION_ESTABLISHMENT_FAILURE"
+        },
+        "ms": 2.4
+      }
+    ]
+  },
+  {
+    "id": "TC-DEREG-01",
+    "title": "Deregistration releases all PDU sessions and N4 state",
+    "ref": "TS 23.502 4.2.2.3.2",
+    "status": "FAIL",
+    "message": "session 1 status: expected 201, got 500",
+    "ms": 3.1,
+    "trace": [
+      {
+        "method": "POST",
+        "path": "/namf-comm/v1/ue-contexts",
+        "request": {
+          "supi": "imsi-001010000000012",
+          "plmnId": {
+            "mcc": "001",
+            "mnc": "01"
+          }
+        },
+        "status": 201,
+        "response": {
+          "supi": "imsi-001010000000012",
+          "state": "REGISTERED",
+          "guti": "5g-guti-001-01-0000000a"
+        },
+        "ms": 1.5
+      },
+      {
+        "method": "POST",
+        "path": "/nsmf-pdusession/v1/sm-contexts",
+        "request": {
+          "supi": "imsi-001010000000012",
+          "pduSessionId": 1,
+          "dnn": "internet",
+          "sNssai": {
+            "sst": 1
+          }
+        },
+        "status": 500,
+        "response": {
+          "cause": "N4_SESSION_ESTABLISHMENT_FAILURE"
+        },
+        "ms": 1.5
+      }
+    ]
+  },
+  {
+    "id": "TC-DEREG-02",
+    "title": "Deregistering an unknown UE returns 404",
+    "ref": "TS 23.502 4.2.2.3.2",
+    "status": "PASS",
+    "message": "",
+    "ms": 1.2,
+    "trace": [
+      {
+        "method": "DELETE",
+        "path": "/namf-comm/v1/ue-contexts/imsi-001010000000013",
+        "request": null,
+        "status": 404,
+        "response": {
+          "cause": "CONTEXT_NOT_FOUND"
+        },
+        "ms": 1.2
+      }
+    ]
+  }
+]

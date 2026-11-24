@@ -1,0 +1,146 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>5G SA Core Validation Report</title>
+<style>
+:root{--bg:#fff;--fg:#1c2330;--mut:#5b6678;--line:#dde2ea;--ok:#1a7f4b;--bad:#b3261e;--warn:#9a6700;--card:#f5f7fa}
+@media (prefers-color-scheme:dark){:root{--bg:#12161d;--fg:#e6eaf0;--mut:#9aa6b8;--line:#2a3240;--ok:#4cc38a;--bad:#ff7b72;--warn:#e3b341;--card:#1a2029}}
+body{background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,sans-serif;margin:0;padding:24px 16px}
+main{max-width:980px;margin:auto} h1{margin:0 0 4px;font-size:24px} h2{margin-top:32px;font-size:18px}
+.sub{color:var(--mut);margin:0 0 20px}
+.kpis{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 16px;min-width:110px}
+.kpi b{display:block;font-size:26px} .kpi span{color:var(--mut);font-size:13px}
+table{width:100%;border-collapse:collapse} th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--mut);font-weight:600;font-size:13px}
+tr.PASS td b{color:var(--ok)} tr.FAIL td b,tr.ERROR td b{color:var(--bad)}
+tr.d td{border-bottom:1px solid var(--line);padding-top:0} summary{cursor:pointer;color:var(--mut);font-size:13px}
+pre{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px;overflow-x:auto;font-size:12px}
+.msg{color:var(--bad);margin:6px 0} .fault{color:var(--warn);font-weight:600}
+.table-wrap{overflow-x:auto}
+</style></head><body><main>
+<h1>5G SA Core Validation Report</h1>
+<p class="sub">Target: http://127.0.0.1:37369 &middot; 2026-10-14 10:44:33 &middot; Mock-core run unless a real target was given</p>
+<p class='fault'>Fault injected: pfcp_fail</p>
+<div class="kpis">
+<div class="kpi"><b>22</b><span>test cases</span></div>
+<div class="kpi"><b style="color:var(--ok)">17</b><span>passed</span></div>
+<div class="kpi"><b style="color:var(--bad)">5</b><span>failed / error</span></div>
+<div class="kpi"><b>77%</b><span>pass rate</span></div></div>
+<h2>Results</h2><div class="table-wrap"><table>
+<tr><th>ID</th><th>Test case</th><th>3GPP reference</th><th>Result</th><th>ms</th></tr>
+<tr class='PASS'><td>TC-NRF-01</td><td>AMF registers with NRF</td><td>TS 29.510 5.2.2.2</td><td><b>PASS</b></td><td>24.0</td></tr><tr class='d'><td colspan='5'><details><summary>Message trace</summary><pre>PUT /nnrf-nfm/v1/nf-instances/nf-amf-1  -&gt;  201  (23.7 ms)
+  request : {&quot;nfType&quot;: &quot;AMF&quot;, &quot;ipv4Addresses&quot;: [&quot;10.0.0.01&quot;]}
+  response: {&quot;nfInstanceId&quot;: &quot;nf-amf-1&quot;, &quot;nfStatus&quot;: &quot;REGISTERED&quot;, &quot;nfType&quot;: &quot;AMF&quot;, &quot;ipv4Addresses&quot;: [&quot;10.0.0.01&quot;]}</pre></details></td></tr><tr class='PASS'><td>TC-NRF-02</td><td>SMF registers with NRF</td><td>TS 29.510 5.2.2.2</td><td><b>PASS</b></td><td>0.9</td></tr><tr class='d'><td colspan='5'><details><summary>Message trace</summary><pre>PUT /nnrf-nfm/v1/nf-instances/nf-smf-1  -&gt;  201  (0.8 ms)
+  request : {&quot;nfType&quot;: &quot;SMF&quot;, &quot;ipv4Addresses&quot;: [&quot;10.0.0.02&quot;]}
+  response: {&quot;nfInstanceId&quot;: &quot;nf-smf-1&quot;, &quot;nfStatus&quot;: &quot;REGISTERED&quot;, &quot;nfType&quot;: &quot;SMF&quot;, &quot;ipv4Addresses&quot;: [&quot;10.0.0.02&quot;]}</pre></details></td></tr><tr class='PASS'><td>TC-NRF-03</td><td>UPF registers with NRF</td><td>TS 29.510 5.2.2.2</td><td><b>PASS</b></td><td>0.9</td></tr><tr class='d'><td colspan='5'><details><summary>Message trace</summary><pre>PUT /nnrf-nfm/v1/nf-instances/nf-upf-1  -&gt;  201  (0.8 ms)
+  request : {&quot;nfType&quot;: &quot;UPF&quot;, &quot;ipv4Addresses&quot;: [&quot;10.0.0.03&quot;]}
+  response: {&quot;nfInstanceId&quot;: &quot;nf-upf-1&quot;, &quot;nfStatus&quot;: &quot;REGISTERED&quot;, &quot;nfType&quot;: &quot;UPF&quot;, &quot;ipv4Addresses&quot;: [&quot;10.0.0.03&quot;]}</pre></details></td></tr><tr class='PASS'><td>TC-NRF-04</td><td>NF re-registration updates the profile</td><td>TS 29.510 5.2.2.2</td><td><b>PASS</b></td><td>0.8</td></tr><tr class='d'><td colspan='5'><details><summary>Message trace</summary><pre>PUT /nnrf-nfm/v1/nf-instances/nf-smf-1  -&gt;  200  (0.7 ms)
+  request : {&quot;nfType&quot;: &quot;SMF&quot;, &quot;ipv4Addresses&quot;: [&quot;10.0.0.22&quot;]}
+  response: {&quot;nfInstanceId&quot;: &quot;nf-smf-1&quot;, &quot;nfStatus&quot;: &quot;REGISTERED&quot;, &quot;nfType&quot;: &quot;SMF&quot;, &quot;ipv4Addresses&quot;: [&quot;10.0.0.22&quot;]}</pre></details></td></tr><tr class='PASS'><td>TC-NRF-05</td><td>SMF discovery returns the registered SMF</td><td>TS 29.510 5.3.2.2</td><td><b>PASS</b></td><td>0.8</td></tr><tr class='d'><td colspan='5'><details><summary>Message trace</summary><pre>GET /nnrf-disc/v1/nf-instances?target-nf-type=SMF&amp;requester-nf-type=AMF  -&gt;  200  (0.8 ms)
+  request : null
+  response: {&quot;nfInstances&quot;: [{&quot;nfInstanceId&quot;: &quot;nf-smf-1&quot;, &quot;nfStatus&quot;: &quot;REGISTERED&quot;, &quot;nfType&quot;: &quot;SMF&quot;, &quot;ipv4Addresses&quot;: [&quot;10.0.0.22&quot;]}]}</pre></details></td></tr><tr class='PASS'><td>TC-NRF-06</td><td>Discovery without target-nf-type is rejected</td><td>TS 29.510 5.3.2.2</td><td><b>PASS</b></td><td>0.8</td></tr><tr class='d'><td colspan='5'><details><summary>Message trace</summary><pre>GET /nnrf-disc/v1/nf-instances  -&gt;  400  (0.8 ms)
+  request : null
+  response: {&quot;cause&quot;: &quot;MANDATORY_QUERY_PARAM_MISSING&quot;, &quot;param&quot;: &quot;target-nf-type&quot;}</pre></details></td></tr><tr class='PASS'><td>TC-NRF-07</td><td>Discovery of an absent NF type returns an empty list</td><td>TS 29.510 5.3.2.2</td><td><b>PASS</b></td><td>0.7</td></tr><tr class='d'><td colspan='5'><details><summary>Message trace</summary><pre>GET /nnrf-disc/v1/nf-instances?target-nf-type=PCF  -&gt;  200  (0.7 ms)
+  request : null
+  response: {&quot;nfInstances&quot;: []}</pre></details></td></tr><tr class='PASS'><td>TC-REG-01</td><td>Initial registration succeeds</td><td>TS 23.502 4.2.2.2.2</td><td><b>PASS</b></td><td>1.0</td></tr><tr class='d'><td colspan='5'><details><summary>Message trace</summary><pre>POST /namf-comm/v1/ue-contexts  -&gt;  201  (0.9 ms)
+  request : {&quot;supi&quot;: &quot;imsi-001010000000001&quot;, &quot;plmnId&quot;: {&quot;mcc&quot;: &quot;001&quot;, &quot;mnc&quot;: &quot;01&quot;}}
+  response: {&quot;supi&quot;: &quot;imsi-001010000000001&quot;, &quot;state&quot;: &quot;REGISTERED&quot;, &quot;guti&quot;: &quot;5g-guti-001-01-00000001&quot;}</pre></details></td></tr><tr class='PASS'><td>TC-REG-02</td><td>Re-registration of a registered UE is accepted</td><td>TS 23.502 4.2.2.2.2</td><td><b>PASS</b></td><td>1.8</td></tr><tr class='d'><td colspan='5'><details><summary>Message trace</summary><pre>POST /namf-comm/v1/ue-contexts  -&gt;  201  (0.9 ms)
+  request : {&quot;supi&quot;: &quot;imsi-001010000000002&quot;, &quot;plmnId&quot;: {&quot;mcc&quot;: &quot;001&quot;, &quot;mnc&quot;: &quot;01&quot;}}
+  response: {&quot;supi&quot;: &quot;imsi-001010000000002&quot;, &quot;state&quot;: &quot;REGISTERED&quot;, &quot;guti&quot;: &quot;5g-guti-001-01-00000002&quot;}
+POST /namf-comm/v1/ue-contexts  -&gt;  200  (0.8 ms)
+  request : {&quot;supi&quot;: &quot;imsi-001010000000002&quot;, &quot;plmnId&quot;: {&quot;mcc&quot;: &quot;001&quot;, &quot;mnc&quot;: &quot;01&quot;}}
+  response: {&quot;supi&quot;: &quot;imsi-001010000000002&quot;, &quot;state&quot;: &quot;REGISTERED&quot;, &quot;guti&quot;: &quot;5g-guti-001-01-00000002&quot;}</pre></details></td></tr><tr class='PASS'><td>TC-REG-03</td><td>Malformed SUPI is rejected</td><td>TS 23.502 4.2.2.2.2</td><td><b>PASS</b></td><td>1.3</td></tr><tr class='d'><td colspan='5'><details><summary>Message trace</summary><pre>POST /namf-comm/v1/ue-contexts  -&gt;  400  (1.2 ms)
+  request : {&quot;supi&quot;: &quot;imsi-123&quot;, &quot;plmnId&quot;: {&quot;mcc&quot;: &quot;001&quot;, &quot;mnc&quot;: &quot;01&quot;}}
+  response: {&quot;cause&quot;: &quot;INVALID_SUPI&quot;}</pre></details></td></tr><tr class='PASS'><td>TC-REG-04</td><td>PLMN not allowed is rejected</td><td>TS 23.502 4.2.2.2.2</td><td><b>PASS</b></td><td>1.1</td></tr><tr class='d'><td colspan='5'><details><summary>Message trace</summary><pre>POST /namf-comm/v1/ue-contexts  -&gt;  403  (1.0 ms)
+  request : {&quot;supi&quot;: &quot;imsi-001010000000003&quot;, &quot;plmnId&quot;: {&quot;mcc&quot;: &quot;404&quot;, &quot;mnc&quot;: &quot;99&quot;}}
+  response: {&quot;cause&quot;: &quot;PLMN_NOT_ALLOWED&quot;}</pre></details></td></tr><tr class='PASS'><td>TC-REG-05</td><td>Barred subscriber fails authentication</td><td>TS 23.502 4.2.2.2.2</td><td><b>PASS</b></td><td>0.9</td></tr><tr class='d'><td colspan='5'><details><summary>Message trace</summary><pre>POST /namf-comm/v1/ue-contexts  -&gt;  403  (0.9 ms)
+  request : {&quot;supi&quot;: &quot;imsi-001019999999999&quot;, &quot;plmnId&quot;: {&quot;mcc&quot;: &quot;001&quot;, &quot;mnc&quot;: &quot;01&quot;}}
+  response: {&quot;cause&quot;: &quot;AUTHENTICATION_FAILURE&quot;}</pre></details></td></tr><tr class='FAIL'><td>TC-PDU-01</td><td>PDU session establishment creates an N4 session</td><td>TS 23.502 4.3.2.2.1</td><td><b>FAIL</b></td><td>2.3</td></tr><tr class='d'><td colspan='5'><details><summary>Message trace</summary><p class='msg'>status: expected 201, got 500</p><pre>POST /namf-comm/v1/ue-contexts  -&gt;  201  (1.1 ms)
+  request : {&quot;supi&quot;: &quot;imsi-001010000000004&quot;, &quot;plmnId&quot;: {&quot;mcc&quot;: &quot;001&quot;, &quot;mnc&quot;: &quot;01&quot;}}
+  response: {&quot;supi&quot;: &quot;imsi-001010000000004&quot;, &quot;state&quot;: &quot;REGISTERED&quot;, &quot;guti&quot;: &quot;5g-guti-001-01-00000003&quot;}
+POST /nsmf-pdusession/v1/sm-contexts  -&gt;  500  (1.2 ms)
+  request : {&quot;supi&quot;: &quot;imsi-001010000000004&quot;, &quot;pduSessionId&quot;: 1, &quot;dnn&quot;: &quot;internet&quot;, &quot;sNssai&quot;: {&quot;sst&quot;: 1}}
+  response: {&quot;cause&quot;: &quot;N4_SESSION_ESTABLISHMENT_FAILURE&quot;}</pre></details></td></tr><tr class='FAIL'><td>TC-PDU-02</td><td>Second PDU session (IMS DNN) on the same UE</td><td>TS 23.502 4.3.2.2.1</td><td><b>FAIL</b></td><td>2.6</td></tr><tr class='d'><td colspan='5'><details><summary>Message trace</summary><p class='msg'>first session status: expected 201, got 500</p><pre>POST /namf-comm/v1/ue-contexts  -&gt;  201  (1.2 ms)
+  request : {&quot;supi&quot;: &quot;imsi-001010000000005&quot;, &quot;plmnId&quot;: {&quot;mcc&quot;: &quot;001&quot;, &quot;mnc&quot;: &quot;01&quot;}}
+  response: {&quot;supi&quot;: &quot;imsi-001010000000005&quot;, &quot;state&quot;: &quot;REGISTERED&quot;, &quot;guti&quot;: &quot;5g-guti-001-01-00000004&quot;}
+POST /nsmf-pdusession/v1/sm-contexts  -&gt;  500  (1.1 ms)
+  request : {&quot;supi&quot;: &quot;imsi-001010000000005&quot;, &quot;pduSessionId&quot;: 1, &quot;dnn&quot;: &quot;internet&quot;, &quot;sNssai&quot;: {&quot;sst&quot;: 1}}
+  response: {&quot;cause&quot;: &quot;N4_SESSION_ESTABLISHMENT_FAILURE&quot;}</pre></details></td></tr><tr class='PASS'><td>TC-PDU-03</td><td>PDU session without registration is rejected</td><td>TS 23.502 4.3.2.2.1</td><td><b>PASS</b></td><td>1.3</td></tr><tr class='d'><td colspan='5'><details><summary>Message trace</summary><pre>POST /nsmf-pdusession/v1/sm-contexts  -&gt;  403  (1.2 ms)
+  request : {&quot;supi&quot;: &quot;imsi-001010000000006&quot;, &quot;pduSessionId&quot;: 1, &quot;dnn&quot;: &quot;internet&quot;, &quot;sNssai&quot;: {&quot;sst&quot;: 1}}
+  response: {&quot;cause&quot;: &quot;UE_NOT_REGISTERED&quot;}</pre></details></td></tr><tr class='PASS'><td>TC-PDU-04</td><td>Unsupported DNN is rejected</td><td>TS 23.502 4.3.2.2.1</td><td><b>PASS</b></td><td>2.2</td></tr><tr class='d'><td colspan='5'><details><summary>Message trace</summary><pre>POST /namf-comm/v1/ue-contexts  -&gt;  201  (1.1 ms)
+  request : {&quot;supi&quot;: &quot;imsi-001010000000007&quot;, &quot;plmnId&quot;: {&quot;mcc&quot;: &quot;001&quot;, &quot;mnc&quot;: &quot;01&quot;}}
+  response: {&quot;supi&quot;: &quot;imsi-001010000000007&quot;, &quot;state&quot;: &quot;REGISTERED&quot;, &quot;guti&quot;: &quot;5g-guti-001-01-00000005&quot;}
+POST /nsmf-pdusession/v1/sm-contexts  -&gt;  403  (1.0 ms)
+  request : {&quot;supi&quot;: &quot;imsi-001010000000007&quot;, &quot;pduSessionId&quot;: 1, &quot;dnn&quot;: &quot;private.corp&quot;, &quot;sNssai&quot;: {&quot;sst&quot;: 1}}
+  response: {&quot;cause&quot;: &quot;DNN_NOT_SUPPORTED&quot;}</pre></details></td></tr><tr class='PASS'><td>TC-PDU-05</td><td>Unsupported network slice (S-NSSAI) is rejected</td><td>TS 23.502 4.3.2.2.1</td><td><b>PASS</b></td><td>2.2</td></tr><tr class='d'><td colspan='5'><details><summary>Message trace</summary><pre>POST /namf-comm/v1/ue-contexts  -&gt;  201  (1.1 ms)
+  request : {&quot;supi&quot;: &quot;imsi-001010000000008&quot;, &quot;plmnId&quot;: {&quot;mcc&quot;: &quot;001&quot;, &quot;mnc&quot;: &quot;01&quot;}}
+  response: {&quot;supi&quot;: &quot;imsi-001010000000008&quot;, &quot;state&quot;: &quot;REGISTERED&quot;, &quot;guti&quot;: &quot;5g-guti-001-01-00000006&quot;}
+POST /nsmf-pdusession/v1/sm-contexts  -&gt;  403  (1.0 ms)
+  request : {&quot;supi&quot;: &quot;imsi-001010000000008&quot;, &quot;pduSessionId&quot;: 1, &quot;dnn&quot;: &quot;internet&quot;, &quot;sNssai&quot;: {&quot;sst&quot;: 9}}
+  response: {&quot;cause&quot;: &quot;SNSSAI_NOT_ALLOWED&quot;}</pre></details></td></tr><tr class='FAIL'><td>TC-PDU-06</td><td>Duplicate PDU session ID is rejected</td><td>TS 23.502 4.3.2.2.1</td><td><b>FAIL</b></td><td>2.1</td></tr><tr class='d'><td colspan='5'><details><summary>Message trace</summary><p class='msg'>first status: expected 201, got 500</p><pre>POST /namf-comm/v1/ue-contexts  -&gt;  201  (1.0 ms)
+  request : {&quot;supi&quot;: &quot;imsi-001010000000009&quot;, &quot;plmnId&quot;: {&quot;mcc&quot;: &quot;001&quot;, &quot;mnc&quot;: &quot;01&quot;}}
+  response: {&quot;supi&quot;: &quot;imsi-001010000000009&quot;, &quot;state&quot;: &quot;REGISTERED&quot;, &quot;guti&quot;: &quot;5g-guti-001-01-00000007&quot;}
+POST /nsmf-pdusession/v1/sm-contexts  -&gt;  500  (0.9 ms)
+  request : {&quot;supi&quot;: &quot;imsi-001010000000009&quot;, &quot;pduSessionId&quot;: 5, &quot;dnn&quot;: &quot;internet&quot;, &quot;sNssai&quot;: {&quot;sst&quot;: 1}}
+  response: {&quot;cause&quot;: &quot;N4_SESSION_ESTABLISHMENT_FAILURE&quot;}</pre></details></td></tr><tr class='PASS'><td>TC-PDU-07</td><td>Out-of-range PDU session ID is rejected</td><td>TS 23.502 4.3.2.2.1</td><td><b>PASS</b></td><td>1.7</td></tr><tr class='d'><td colspan='5'><details><summary>Message trace</summary><pre>POST /namf-comm/v1/ue-contexts  -&gt;  201  (0.7 ms)
+  request : {&quot;supi&quot;: &quot;imsi-001010000000010&quot;, &quot;plmnId&quot;: {&quot;mcc&quot;: &quot;001&quot;, &quot;mnc&quot;: &quot;01&quot;}}
+  response: {&quot;supi&quot;: &quot;imsi-001010000000010&quot;, &quot;state&quot;: &quot;REGISTERED&quot;, &quot;guti&quot;: &quot;5g-guti-001-01-00000008&quot;}
+POST /nsmf-pdusession/v1/sm-contexts  -&gt;  400  (0.9 ms)
+  request : {&quot;supi&quot;: &quot;imsi-001010000000010&quot;, &quot;pduSessionId&quot;: 16, &quot;dnn&quot;: &quot;internet&quot;, &quot;sNssai&quot;: {&quot;sst&quot;: 1}}
+  response: {&quot;cause&quot;: &quot;INVALID_PDU_SESSION_ID&quot;}</pre></details></td></tr><tr class='FAIL'><td>TC-PDU-08</td><td>PDU session release removes the N4 session</td><td>TS 23.502 4.3.4.2</td><td><b>FAIL</b></td><td>1.8</td></tr><tr class='d'><td colspan='5'><details><summary>Message trace</summary><p class='msg'>setup status: expected 201, got 500</p><pre>POST /namf-comm/v1/ue-contexts  -&gt;  201  (0.8 ms)
+  request : {&quot;supi&quot;: &quot;imsi-001010000000011&quot;, &quot;plmnId&quot;: {&quot;mcc&quot;: &quot;001&quot;, &quot;mnc&quot;: &quot;01&quot;}}
+  response: {&quot;supi&quot;: &quot;imsi-001010000000011&quot;, &quot;state&quot;: &quot;REGISTERED&quot;, &quot;guti&quot;: &quot;5g-guti-001-01-00000009&quot;}
+POST /nsmf-pdusession/v1/sm-contexts  -&gt;  500  (0.9 ms)
+  request : {&quot;supi&quot;: &quot;imsi-001010000000011&quot;, &quot;pduSessionId&quot;: 1, &quot;dnn&quot;: &quot;internet&quot;, &quot;sNssai&quot;: {&quot;sst&quot;: 1}}
+  response: {&quot;cause&quot;: &quot;N4_SESSION_ESTABLISHMENT_FAILURE&quot;}</pre></details></td></tr><tr class='FAIL'><td>TC-DEREG-01</td><td>Deregistration releases all PDU sessions and N4 state</td><td>TS 23.502 4.2.2.3.2</td><td><b>FAIL</b></td><td>2.3</td></tr><tr class='d'><td colspan='5'><details><summary>Message trace</summary><p class='msg'>session 1 status: expected 201, got 500</p><pre>POST /namf-comm/v1/ue-contexts  -&gt;  201  (1.2 ms)
+  request : {&quot;supi&quot;: &quot;imsi-001010000000012&quot;, &quot;plmnId&quot;: {&quot;mcc&quot;: &quot;001&quot;, &quot;mnc&quot;: &quot;01&quot;}}
+  response: {&quot;supi&quot;: &quot;imsi-001010000000012&quot;, &quot;state&quot;: &quot;REGISTERED&quot;, &quot;guti&quot;: &quot;5g-guti-001-01-0000000a&quot;}
+POST /nsmf-pdusession/v1/sm-contexts  -&gt;  500  (1.0 ms)
+  request : {&quot;supi&quot;: &quot;imsi-001010000000012&quot;, &quot;pduSessionId&quot;: 1, &quot;dnn&quot;: &quot;internet&quot;, &quot;sNssai&quot;: {&quot;sst&quot;: 1}}
+  response: {&quot;cause&quot;: &quot;N4_SESSION_ESTABLISHMENT_FAILURE&quot;}</pre></details></td></tr><tr class='PASS'><td>TC-DEREG-02</td><td>Deregistering an unknown UE returns 404</td><td>TS 23.502 4.2.2.3.2</td><td><b>PASS</b></td><td>0.9</td></tr><tr class='d'><td colspan='5'><details><summary>Message trace</summary><pre>DELETE /namf-comm/v1/ue-contexts/imsi-001010000000013  -&gt;  404  (0.8 ms)
+  request : null
+  response: {&quot;cause&quot;: &quot;CONTEXT_NOT_FOUND&quot;}</pre></details></td></tr></table></div><h2>Core log analysis (Log Tracker)</h2><pre>CORE TEST LOG SUMMARY
+========================================
+Total log lines : 32
+Failure lines   : 17
+Invalid IMSIs   : 0
+PLMNs seen      : MCC 001 / MNC 01
+
+Failures by node:
+  SMF    9
+  UPF    5
+  AMF    3
+
+Failures by event:
+  PDU_SESSION_FAILURE    9
+  PFCP_ERROR             5
+  REGISTRATION_REJECT    2
+  AUTH_FAILURE           1
+
+Top IMSIs by failure count:
+  001010000000004  2
+  001010000000005  2
+  001010000000009  2
+  001010000000011  2
+  001010000000012  2
+
+Failure detail:
+  2026-10-14 10:44:33 [ERROR] AMF REGISTRATION_REJECT invalid SUPI format
+  2026-10-14 10:44:33 [ERROR] AMF REGISTRATION_REJECT IMSI=001010000000003 MCC=001 MNC=01 5GMM cause #11 PLMN not allowed
+  2026-10-14 10:44:33 [ERROR] AMF AUTH_FAILURE IMSI=001019999999999 MCC=001 MNC=01 authentication rejected by AUSF
+  2026-10-14 10:44:33 [ERROR] UPF PFCP_ERROR IMSI=001010000000004 MCC=001 MNC=01 PFCP Session Establishment Response cause=SYSTEM_FAILURE
+  2026-10-14 10:44:33 [ERROR] SMF PDU_SESSION_FAILURE IMSI=001010000000004 MCC=001 MNC=01 N4_SESSION_ESTABLISHMENT_FAILURE
+  2026-10-14 10:44:33 [ERROR] UPF PFCP_ERROR IMSI=001010000000005 MCC=001 MNC=01 PFCP Session Establishment Response cause=SYSTEM_FAILURE
+  2026-10-14 10:44:33 [ERROR] SMF PDU_SESSION_FAILURE IMSI=001010000000005 MCC=001 MNC=01 N4_SESSION_ESTABLISHMENT_FAILURE
+  2026-10-14 10:44:33 [ERROR] SMF PDU_SESSION_FAILURE IMSI=001010000000006 MCC=001 MNC=01 UE_NOT_REGISTERED
+  2026-10-14 10:44:33 [ERROR] SMF PDU_SESSION_FAILURE IMSI=001010000000007 MCC=001 MNC=01 DNN_NOT_SUPPORTED
+  2026-10-14 10:44:33 [ERROR] SMF PDU_SESSION_FAILURE IMSI=001010000000008 MCC=001 MNC=01 SNSSAI_NOT_ALLOWED
+  2026-10-14 10:44:33 [ERROR] UPF PFCP_ERROR IMSI=001010000000009 MCC=001 MNC=01 PFCP Session Establishment Response cause=SYSTEM_FAILURE
+  2026-10-14 10:44:33 [ERROR] SMF PDU_SESSION_FAILURE IMSI=001010000000009 MCC=001 MNC=01 N4_SESSION_ESTABLISHMENT_FAILURE
+  2026-10-14 10:44:33 [ERROR] SMF PDU_SESSION_FAILURE IMSI=001010000000010 MCC=001 MNC=01 INVALID_PDU_SESSION_ID
+  2026-10-14 10:44:33 [ERROR] UPF PFCP_ERROR IMSI=001010000000011 MCC=001 MNC=01 PFCP Session Establishment Response cause=SYSTEM_FAILURE
+  2026-10-14 10:44:33 [ERROR] SMF PDU_SESSION_FAILURE IMSI=001010000000011 MCC=001 MNC=01 N4_SESSION_ESTABLISHMENT_FAILURE
+  2026-10-14 10:44:33 [ERROR] UPF PFCP_ERROR IMSI=001010000000012 MCC=001 MNC=01 PFCP Session Establishment Response cause=SYSTEM_FAILURE
+  2026-10-14 10:44:33 [ERROR] SMF PDU_SESSION_FAILURE IMSI=001010000000012 MCC=001 MNC=01 N4_SESSION_ESTABLISHMENT_FAILURE
+</pre>
+</main></body></html>
