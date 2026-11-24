@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Live Validation Console</title>
+<style>
+:root{--bg:#f6f8fb;--panel:#fff;--fg:#1c2330;--mut:#5b6678;--line:#dde2ea;--acc:#0b5cad;--ok:#1a7f4b;--bad:#b3261e;--warn:#9a6700;--code:#f1f4f8}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1319;--panel:#171c24;--fg:#e6eaf0;--mut:#9aa6b8;--line:#2a3240;--acc:#6cb0ff;--ok:#4cc38a;--bad:#ff7b72;--warn:#e3b341;--code:#1d232d}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.45 system-ui,Segoe UI,sans-serif}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;padding:12px 16px;background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+header h1{font-size:16px;margin:0;flex:1 1 280px}
+header label{color:var(--mut);font-size:12px}
+a{color:var(--acc)}
+.grid{display:grid;grid-template-columns:minmax(300px,420px) 1fr;gap:16px;padding:16px;max-width:1400px;margin:auto}
+@media (max-width:900px){.grid{grid-template-columns:1fr}}
+.col{display:flex;flex-direction:column;gap:16px;min-width:0}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.panel h2{font-size:13px;margin:0 0 8px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em}
+.action{border-top:1px solid var(--line);padding:10px 0}
+.action:first-of-type{border-top:0}
+.action h3{font-size:14px;margin:0 0 6px}
+.fields{display:flex;flex-wrap:wrap;gap:8px;align-items:end}
+.f{display:flex;flex-direction:column;gap:2px}
+.f span{font-size:11px;color:var(--mut)}
+input,select,button{font:inherit;color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:6px 8px}
+input{width:120px}
+input.wide{width:230px}
+button{cursor:pointer;background:var(--acc);color:#fff;border-color:var(--acc);font-weight:600}
+button.sec{background:transparent;color:var(--acc)}
+button:disabled{opacity:.5;cursor:default}
+.chip{display:inline-block;border-radius:999px;padding:1px 9px;font-size:12px;font-weight:700;border:1px solid currentColor}
+.ok{color:var(--ok)}.bad{color:var(--bad)}.warn{color:var(--warn)}
+pre{margin:4px 0 0;background:var(--code);border-radius:6px;padding:8px;overflow-x:auto;font:12px/1.4 ui-monospace,Consolas,monospace;white-space:pre-wrap;word-break:break-word}
+.entry{border-top:1px solid var(--line);padding:8px 0}
+.entry:first-child{border-top:0}
+.top{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.m{font-weight:700;font-size:12px;color:var(--mut)}
+.p{font-family:ui-monospace,Consolas,monospace;font-size:12px;word-break:break-all}
+.ms{margin-left:auto;color:var(--mut);font-size:12px}
+.scroll{max-height:380px;overflow:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:5px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--mut);font-weight:600;font-size:12px}
+.badges{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.steps{margin:0;padding-left:18px;color:var(--mut)}
+.steps li{margin:3px 0}
+.empty{color:var(--mut)}
+tr.t{cursor:pointer}
+.logline.e{color:var(--bad)}
+.note{color:var(--mut);font-size:12px}
+</style>
+</head>
+<body>
+<header>
+  <h1 id="title">Live Validation Console</h1>
+  <span id="other"></span>
+  <label>Fault&nbsp;
+    <select id="fault"></select>
+  </label>
+  <button class="sec" id="reset">Reset network</button>
+</header>
+<div class="grid">
+  <div class="col">
+    <div class="panel">
+      <h2>Subscriber</h2>
+      <div class="fields">
+        <label class="f"><span>SUPI (used by all actions)</span><input id="supi" class="wide" value="imsi-001010000000001"></label>
+        <button class="sec" id="newsupi" title="Use the next SUPI">New SUPI</button>
+      </div>
+      <p class="note">Tip: SUPI = imsi- followed by 15 digits. The barred test subscriber is imsi-001019999999999.</p>
+    </div>
+    <div class="panel"><h2>Actions - fill in, then press Send</h2><div id="actions"></div></div>
+    <div class="panel"><h2>Suggested demo steps</h2><ol class="steps" id="steps"></ol></div>
+  </div>
+  <div class="col">
+    <div class="panel"><h2 id="statetitle">Network state</h2><div id="state" class="empty">Nothing yet. Send an action.</div></div>
+    <div class="panel"><h2>Live messages (newest first)</h2><div id="log" class="scroll"><span class="empty">No messages yet.</span></div></div>
+    <div class="panel">
+      <h2>Test cases</h2>
+      <div class="fields">
+        <label class="f"><span>One test case</span><select id="testsel" style="max-width:360px"></select></label>
+        <button id="runone">Run it</button>
+        <button id="runall">Run full suite (resets network)</button>
+      </div>
+      <p id="runsum" class="note"></p>
+      <table id="results"></table>
+    </div>
+    <div class="panel"><h2>Core log (what the network wrote)</h2><div class="scroll"><pre id="corelog"></pre></div></div>
+  </div>
+</div>
+<script>
+"use strict";
+const $ = (s) => document.querySelector(s);
+const el = (tag, props = {}, ...kids) => {
+  const e = document.createElement(tag);
+  Object.assign(e, props);
+  kids.forEach((k) => e.append(k));
+  return e;
+};
+const j = (o) => JSON.stringify(o, null, 1);
+async function api(path, body) {
+  const r = await fetch(path, { method: body === undefined ? "GET" : "POST", headers: { "Content-Type": "application/json" },
+    body: body === undefined ? undefined : JSON.stringify(body) });
+  return r.json();
+}
+const mem = {};                      // remembered values, e.g. last smContextRef
+let INFO = null, CFG = null;
+
+// ---- field helpers ----
+const txt = (name, label, def, extra = {}) => ({ type: "text", name, label, def, ...extra });
+const num = (name, label, def) => ({ type: "number", name, label, def });
+const sel = (name, label, opts, def) => ({ type: "select", name, label, opts, def: def || opts[0] });
+const supiNow = () => $("#supi").value.trim();
+const plmn = (v) => ({ mcc: v.mcc, mnc: v.mnc });
+const plmnFields = [txt("mcc", "MCC", "001"), txt("mnc", "MNC", "01")];
+
+const CONFIGS = {
+  "5g": {
+    stateTitle: "N4 / PFCP sessions on the UPF",
+    steps: [
+      "Press 'Register AMF + SMF + UPF' (they join the NRF).",
+      "Register a UE. Expect 201 and a 5G-GUTI.",
+      "Create PDU session 1 on 'internet'. Expect 201, a UE IP, and a PFCP SEID. The state panel shows the new N4 session.",
+      "Try a wrong DNN (private.corp) or a duplicate session ID. Expect 403 / 409 with a cause.",
+      "Set Fault to pfcp_fail, create session 2. Expect 500 N4_SESSION_ESTABLISHMENT_FAILURE; the core log shows PFCP_ERROR.",
+      "Set Fault to none, then press 'Run full suite' to see all 22 test cases run live."
+    ],
+    actions: [
+      { title: "1. Register AMF + SMF + UPF with the NRF", fields: [], label: "Register AMF + SMF + UPF", multi: () => [
+        ["PUT", "/nnrf-nfm/v1/nf-instances/nf-amf-1", { nfType: "AMF", ipv4Addresses: ["10.0.0.1"] }],
+        ["PUT", "/nnrf-nfm/v1/nf-instances/nf-smf-1", { nfType: "SMF", ipv4Addresses: ["10.0.0.2"] }],
+        ["PUT", "/nnrf-nfm/v1/nf-instances/nf-upf-1", { nfType: "UPF", ipv4Addresses: ["10.0.0.3"] }]] },
+      { title: "Discover a network function", fields: [sel("t", "Target NF type", ["SMF", "UPF", "AMF", "PCF"])],
+        build: (v) => ["GET", "/nnrf-disc/v1/nf-instances?target-nf-type=" + encodeURIComponent(v.t)] },
+      { title: "2. Register the UE (AMF)", fields: plmnFields,
+        build: (v) => ["POST", "/namf-comm/v1/ue-contexts", { supi: supiNow(), plmnId: plmn(v) }] },
+      { title: "3. Create a PDU session (SMF + UPF)", fields: [num("sid", "Session ID", 1), sel("dnn", "DNN", ["internet", "ims", "private.corp"]), num("sst", "Slice SST", 1)],
+        build: (v) => ["POST", "/nsmf-pdusession/v1/sm-contexts", { supi: supiNow(), pduSessionId: +v.sid, dnn: v.dnn, sNssai: { sst: +v.sst } }] },
+      { title: "Release a PDU session", fields: [txt("ref", "SM context ref", "smctx-1", { remember: "smContextRef" })],
+        build: (v) => ["DELETE", "/nsmf-pdusession/v1/sm-contexts/" + encodeURIComponent(v.ref)] },
+      { title: "Deregister the UE", fields: [], build: () => ["DELETE", "/namf-comm/v1/ue-contexts/" + encodeURIComponent(supiNow())] }
+    ],
+    remember: (res) => { if (res && res.smContextRef) mem.smContextRef = res.smContextRef; },
+    refreshState: async () => {
+      const r = await api("/api/call", { method: "GET", path: "/n4/sessions" });
+      const rows = (r.response && r.response.sessions) || [];
+      const box = $("#state"); box.replaceChildren();
+      if (!rows.length) { box.append(el("span", { className: "empty", textContent: "No active N4 sessions." })); return; }
+      const t = el("table"); t.append(el("tr", {}, ...["SEID", "SUPI", "Session", "UE IP", "State"].map((h) => el("th", { textContent: h }))));
+      rows.forEach((s) => t.append(el("tr", {}, ...[s.seid, s.supi, s.pduSessionId, s.ueIp, s.state].map((c) => el("td", { textContent: String(c) })))));
+      box.append(t);
+    }
+  },
+  "4g5g": {
+    stateTitle: "UE state (what the network holds for this subscriber)",
+    steps: [
+      "Press '5G registration'. The UE is on 5GC / NR with session 1 (5QI 9) and an IP.",
+      "Add a PDU session: id 2, DNN ims. It gets 5QI 5.",
+      "Handover to LTE. The UE moves to EPC; the IPs stay the same; 5QI becomes QCI with the same numbers.",
+      "Handover back to NR, then try NR again. Expect 409 ALREADY_ON_TARGET_RAT.",
+      "From NR, press 'Start voice call'. EPS fallback moves the UE to LTE and adds a QCI 1 bearer.",
+      "Set Fault to n26_down and try a handover. Expect 500 N26_CONTEXT_TRANSFER_FAILURE; the core log shows HANDOVER_FAILURE.",
+      "Set Fault to none and press 'Run full suite' to run all 21 test cases live."
+    ],
+    actions: [
+      { title: "4G attach (MME / HSS)", fields: plmnFields, build: (v) => ["POST", "/epc/attach", { supi: supiNow(), plmnId: plmn(v) }] },
+      { title: "5G registration (AMF)", fields: plmnFields, build: (v) => ["POST", "/5gc/register", { supi: supiNow(), plmnId: plmn(v) }] },
+      { title: "Add a 5G PDU session (UE must be in 5GC)", fields: [num("sid", "Session ID", 2), sel("dnn", "DNN", ["ims", "internet"]), num("sst", "Slice SST", 1)],
+        build: (v) => ["POST", "/5gc/pdu-session", { supi: supiNow(), pduSessionId: +v.sid, dnn: v.dnn, sst: +v.sst }] },
+      { title: "Connected-mode handover (N26)", fields: [sel("rat", "Move to", ["LTE", "NR"])],
+        build: (v) => ["POST", "/mobility/handover", { supi: supiNow(), targetRat: v.rat }] },
+      { title: "Idle-mode move (TAU / mobility registration)", fields: [sel("rat", "Move to", ["LTE", "NR"])],
+        build: (v) => ["POST", "/mobility/idle", { supi: supiNow(), targetRat: v.rat }] },
+      { title: "IMS voice call", fields: [], label: "Start voice call", build: () => ["POST", "/ims/call", { supi: supiNow() }] },
+      { title: "End voice call", fields: [], label: "End voice call", build: () => ["DELETE", "/ims/call/" + encodeURIComponent(supiNow())] },
+      { title: "Look at the UE state", fields: [], label: "Refresh state", build: () => ["GET", "/ue/" + encodeURIComponent(supiNow())] }
+    ],
+    remember: () => {},
+    refreshState: async () => {
+      const r = await api("/api/call", { method: "GET", path: "/ue/" + encodeURIComponent(supiNow()) });
+      const box = $("#state"); box.replaceChildren();
+      if (r.status !== 200) { box.append(el("span", { className: "empty", textContent: "UE not found. Attach or register first." })); return; }
+      const u = r.response;
+      const badges = el("div", { className: "badges" },
+        el("span", { className: "chip ok", textContent: u.core }), el("span", { className: "chip ok", textContent: u.rat }),
+        el("span", { className: "chip " + (u.inCall ? "warn" : ""), textContent: u.inCall ? "In voice call" : "No call" }),
+        el("span", { className: "note", textContent: "GUTI: " + u.guti }));
+      const t = el("table"); t.append(el("tr", {}, ...["Session", "DNN", "Slice", "UE IP", "QoS flows / bearers"].concat(u.core === "EPC" ? ["EBI"] : []).map((h) => el("th", { textContent: h }))));
+      u.sessions.forEach((s) => {
+        const flows = s.flows.map((f) => f.qiType + " " + f.qi + " (" + f.kind + ")").join(", ");
+        const cells = [s.id, s.dnn, s.sst == null ? "-" : s.sst, s.ip, flows].concat(u.core === "EPC" ? [s.ebi] : []);
+        t.append(el("tr", {}, ...cells.map((c) => el("td", { textContent: String(c) }))));
+      });
+      box.append(badges, t);
+    }
+  }
+};
+
+// ---- message log ----
+function addLog(method, path, body, res) {
+  const log = $("#log");
+  if (log.querySelector(".empty")) log.replaceChildren();
+  const ok = res.status >= 200 && res.status < 300;
+  const e = el("div", { className: "entry" },
+    el("div", { className: "top" },
+      el("span", { className: "m", textContent: method }), el("span", { className: "p", textContent: path }),
+      el("span", { className: "chip " + (ok ? "ok" : "bad"), textContent: String(res.status) }),
+      el("span", { className: "ms", textContent: res.ms + " ms" })));
+  if (body !== undefined && body !== null) e.append(el("pre", { textContent: "request  " + JSON.stringify(body) }));
+  e.append(el("pre", { textContent: "response " + (res.response === null ? "(empty)" : JSON.stringify(res.response)) }));
+  log.prepend(e);
+  while (log.children.length > 60) log.lastChild.remove();
+}
+
+async function send(method, path, body) {
+  const res = await api("/api/call", { method, path, body });
+  addLog(method, path, body, res);
+  CFG.remember(res.response);
+  syncRemembered();
+  await CFG.refreshState();
+  await refreshCoreLog();
+  return res;
+}
+
+function values(form) {
+  const v = {};
+  form.querySelectorAll("[data-name]").forEach((i) => { v[i.dataset.name] = i.value; });
+  return v;
+}
+function syncRemembered() {
+  document.querySelectorAll("[data-remember]").forEach((i) => { if (mem[i.dataset.remember]) i.value = mem[i.dataset.remember]; });
+}
+
+function buildActions() {
+  const box = $("#actions");
+  CFG.actions.forEach((a) => {
+    const form = el("div", { className: "action" }, el("h3", { textContent: a.title }));
+    const row = el("div", { className: "fields" });
+    a.fields.forEach((f) => {
+      const input = f.type === "select"
+        ? el("select", {}, ...f.opts.map((o) => el("option", { value: o, textContent: o })))
+        : el("input", { type: f.type, value: f.def });
+      if (f.type === "select") input.value = f.def;
+      input.dataset.name = f.name;
+      if (f.remember) input.dataset.remember = f.remember;
+      row.append(el("label", { className: "f" }, el("span", { textContent: f.label }), input));
+    });
+    const btn = el("button", { textContent: a.label || "Send" });
+    btn.onclick = async () => {
+      btn.disabled = true;
+      try {
+        const v = values(form);
+        const calls = a.multi ? a.multi(v) : [a.build(v)];
+        for (const [m, p, b] of calls) await send(m, p, b);
+      } finally { btn.disabled = false; }
+    };
+    row.append(btn);
+    form.append(row);
+    box.append(form);
+  });
+}
+
+// ---- core log ----
+async function refreshCoreLog() {
+  const r = await api("/api/log");
+  const pre = $("#corelog"); pre.replaceChildren();
+  r.lines.forEach((l) => pre.append(el("div", { className: "logline" + (l.includes("[ERROR]") ? " e" : ""), textContent: l })));
+  pre.parentElement.scrollTop = pre.parentElement.scrollHeight;
+}
+
+// ---- tests ----
+function resultRow(r) {
+  const cls = r.status === "PASS" ? "ok" : "bad";
+  const tr = el("tr", { className: "t" }, el("td", { textContent: r.id }), el("td", { textContent: r.title }),
+    el("td", {}, el("span", { className: "chip " + cls, textContent: r.status })));
+  const detail = el("tr", { hidden: true }, el("td", { colSpan: 3 }));
+  const lines = [];
+  if (r.message) lines.push(r.message, "");
+  if (r.metrics) lines.push(Object.entries(r.metrics).map(([k, v]) => k + ": " + v).join("\n"), "");
+  if (r.calls > r.trace.length) lines.push("(first and last " + r.trace.length / 2 + " of " + r.calls + " calls shown)");
+  r.trace.forEach((t) => lines.push(t.method + " " + t.path + " -> " + t.status + "\n  request : " + JSON.stringify(t.request) + "\n  response: " + JSON.stringify(t.response)));
+  detail.firstChild.append(el("pre", { textContent: lines.join("\n") }));
+  tr.onclick = () => { detail.hidden = !detail.hidden; };
+  return [tr, detail];
+}
+let counts;
+function showSummary() {
+  $("#runsum").textContent = counts.total ? counts.pass + " passed, " + counts.fail + " failed of " + counts.total + " run" : "";
+}
+async function runTest(id, table) {
+  const r = await api("/api/run-test", { id });
+  counts.total++; r.status === "PASS" ? counts.pass++ : counts.fail++;
+  table.append(...resultRow(r));
+  showSummary();
+  await CFG.refreshState(); await refreshCoreLog();
+}
+async function init() {
+  INFO = await api("/api/info");
+  CFG = CONFIGS[INFO.project];
+  document.title = INFO.title;
+  $("#title").textContent = INFO.title + " - live console";
+  $("#statetitle").textContent = CFG.stateTitle;
+  const other = INFO.project === "5g" ? "4g5g" : "5g";
+  if (INFO.ports[other]) $("#other").append(el("a", { href: "http://127.0.0.1:" + INFO.ports[other], textContent: "Open other console" }));
+  const fs = $("#fault");
+  fs.append(el("option", { value: "", textContent: "none" }), ...INFO.faults.map((f) => el("option", { value: f, textContent: f })));
+  fs.value = INFO.fault || "";
+  fs.onchange = async () => { await api("/api/fault", { fault: fs.value || null }); };
+  $("#reset").onclick = async () => {
+    await api("/api/reset", { keepFault: false }); fs.value = "";
+    $("#log").replaceChildren(el("span", { className: "empty", textContent: "Network reset. No messages yet." }));
+    await CFG.refreshState(); await refreshCoreLog();
+  };
+  let n = 1;
+  $("#newsupi").onclick = () => { n++; $("#supi").value = "imsi-00101" + String(n).padStart(10, "0"); CFG.refreshState(); };
+  CFG.steps.forEach((s) => $("#steps").append(el("li", { textContent: s })));
+  buildActions();
+  INFO.tests.forEach((t) => $("#testsel").append(el("option", { value: t.id, textContent: t.id + "  " + t.title })));
+  counts = { total: 0, pass: 0, fail: 0 };
+  $("#runone").onclick = async () => {
+    const table = $("#results"); await runTest($("#testsel").value, table);
+  };
+  $("#runall").onclick = async () => {
+    const b = $("#runall"); b.disabled = true;
+    const table = $("#results"); table.replaceChildren(); counts = { total: 0, pass: 0, fail: 0 };
+    await api("/api/reset", { keepFault: true });
+    for (const t of INFO.tests) await runTest(t.id, table);
+    b.disabled = false;
+  };
+  $("#supi").onchange = () => CFG.refreshState();
+  await CFG.refreshState(); await refreshCoreLog();
+  setInterval(refreshCoreLog, 3000);
+}
+init();
+</script>
+</body>
+</html>
